@@ -14,15 +14,14 @@ const api = axios.create({
 });
 
 export const uploadVideo = async (videoUri: string): Promise<string> => {
+  const formData = new FormData();
   try {
-    const formData = new FormData();
-    
     if (Platform.OS === 'web') {
       // For web, we need to fetch the blob from the URL
       if (videoUri.startsWith('blob:')) {
         const response = await fetch(videoUri);
         const blob = await response.blob();
-        const fileType = 'webm';
+        const fileType = blob.type.split('/').pop() || 'webm';
         const fileName = `video-${Date.now()}.${fileType}`;
         formData.append('file', blob, fileName);
       } else {
@@ -40,7 +39,12 @@ export const uploadVideo = async (videoUri: string): Promise<string> => {
         type: `video/${fileType}`,
       });
     }
+  } catch (error) {
+    console.error('Error processing video:', error);
+    throw error;
+  }
 
+  try {
     const response = await api.post('/predict', formData);
     return response.data.prediction;
   } catch (error) {
