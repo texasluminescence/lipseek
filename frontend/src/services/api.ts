@@ -21,6 +21,7 @@ export const uploadVideo = async (videoUri: string): Promise<string> => {
       if (videoUri.startsWith('blob:')) {
         const response = await fetch(videoUri);
         const blob = await response.blob();
+        console.log("original video format: ", blob.type.split('/').pop())
         const fileType = blob.type.split('/').pop() || 'webm';
         const fileName = `video-${Date.now()}.${fileType}`;
         formData.append('file', blob, fileName);

@@ -115,7 +115,7 @@ const WebCameraView: React.FC<WebCameraViewProps> = ({ onVideoRecorded }) => {
     setIsRecording(true);
     
     try {
-      const recorder = new MediaRecorder(cameraStream);
+      const recorder = new MediaRecorder(cameraStream, { mimeType: "video/mp4" });
       
       recorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -124,7 +124,7 @@ const WebCameraView: React.FC<WebCameraViewProps> = ({ onVideoRecorded }) => {
       };
       
       recorder.onstop = () => {
-        const blob = new Blob(chunks.current, { type: 'video/webm' });
+        const blob = new Blob(chunks.current, { type: 'video/mp4' });
         const url = URL.createObjectURL(blob);
         setVideoURL(url);
         onVideoRecorded(url);
