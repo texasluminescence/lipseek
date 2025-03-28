@@ -3,8 +3,8 @@ import { Platform } from 'react-native';
 
 // Use HTTPS for web platform
 const API_URL = Platform.OS === 'web' 
-  ? 'https://api.dermetric.cashel.dev:5555'
-  : 'http://api.dermetric.cashel.dev:5555';
+  ? 'https://api.lipseek.texasluminescence.org'
+  : 'http://api.lipseek.texasluminescence.org';
 
 const api = axios.create({
   baseURL: API_URL,
