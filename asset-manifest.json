@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.js": "/lipseek/static/js/main.3715a8cd.js",
+    "main.js": "/lipseek/static/js/main.c42018db.js",
     "static/js/974.244d0d0c.js": "/lipseek/static/js/974.244d0d0c.js",
     "static/media/MaterialIcons.ttf": "/lipseek/static/media/MaterialIcons.f20305dee9d396fea5c7.ttf",
     "static/media/icon.png": "/lipseek/static/media/icon.f6e74709ddb35ea644bd.png",
@@ -10,11 +10,11 @@
     "favicon-16.png": "/lipseek/favicon-16.png",
     "serve.json": "/lipseek/serve.json",
     "manifest.json": "/lipseek/manifest.json",
-    "main.3715a8cd.js.map": "/lipseek/static/js/main.3715a8cd.js.map",
+    "main.c42018db.js.map": "/lipseek/static/js/main.c42018db.js.map",
     "974.244d0d0c.js.map": "/lipseek/static/js/974.244d0d0c.js.map"
   },
   "entrypoints": [
     "static/js/974.244d0d0c.js",
-    "static/js/main.3715a8cd.js"
+    "static/js/main.c42018db.js"
   ]
 }
