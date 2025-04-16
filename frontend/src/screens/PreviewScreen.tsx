@@ -1,15 +1,28 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
+import { 
+  StyleSheet, 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  ActivityIndicator, 
+  ScrollView,
+  Dimensions,
+  StatusBar as RNStatusBar,
+  SafeAreaView
+} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import PlatformVideoPlayer from '../components/PlatformVideoPlayer';
 import { RootStackParamList } from '../types/navigation';
 import { uploadVideo } from '../services/api';
+import { LinearGradient } from 'expo-linear-gradient';
 
 type PreviewScreenRouteProp = RouteProp<RootStackParamList, 'Preview'>;
 type PreviewScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Preview'>;
+
+const { width } = Dimensions.get('window');
 
 const PreviewScreen: React.FC = () => {
   const navigation = useNavigation<PreviewScreenNavigationProp>();
@@ -40,142 +53,321 @@ const PreviewScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
+      <LinearGradient
+        colors={['#0F2E4C', '#0A1A2E']}
+        style={styles.background}
+      />
       
-      <View style={styles.videoContainer}>
-        <PlatformVideoPlayer uri={uri} />
-      </View>
-      
-      <View style={styles.content}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <MaterialIcons name="arrow-back" size={24} color="#333" />
-        </TouchableOpacity>
+      <View style={styles.container}>
+        <View style={styles.videoWrapper}>
+          <View style={styles.videoContainer}>
+            <PlatformVideoPlayer uri={uri} />
+          </View>
+        </View>
         
-        {transcript ? (
-          <View style={styles.resultContainer}>
-            <Text style={styles.resultTitle}>Transcript</Text>
-            <ScrollView style={styles.transcriptContainer}>
-              <Text style={styles.transcript}>{transcript}</Text>
-            </ScrollView>
-            <TouchableOpacity 
-              style={[styles.button, styles.secondaryButton]}
-              onPress={handleStartOver}
-            >
-              <MaterialIcons name="refresh" size={20} color="white" />
-              <Text style={styles.buttonText}>Start Over</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View style={styles.actionContainer}>
-            {analyzing ? (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#4285F4" />
-                <Text style={styles.loadingText}>Analyzing video...</Text>
+        <View style={styles.content}>
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="chevron-back" size={24} color="#fff" />
+          </TouchableOpacity>
+          
+          {!transcript && !analyzing && (
+            <View style={styles.infoCardContainer}>
+              <View style={styles.infoCard}>
+                <Ionicons name="information-circle-outline" size={24} color="#00CED1" style={styles.infoIcon} />
+                <Text style={styles.infoText}>
+                  Ready to analyze your recording. Our AI will transcribe the speech content.
+                </Text>
               </View>
-            ) : (
-              <>
-                {error && <Text style={styles.errorText}>{error}</Text>}
-                <TouchableOpacity 
-                  style={[styles.button, styles.primaryButton]}
-                  onPress={handleAnalyzeVideo}
+            </View>
+          )}
+          
+          <Text style={styles.headerText}>Recording Preview</Text>
+          
+          {transcript ? (
+            <View style={styles.resultContainer}>
+              <View style={styles.transcriptHeader}>
+                <Text style={styles.resultTitle}>Transcript</Text>
+                <View style={styles.transcriptBadge}>
+                  <Text style={styles.transcriptBadgeText}>Completed</Text>
+                </View>
+              </View>
+              
+              <ScrollView style={styles.transcriptContainer}>
+                <Text style={styles.transcript}>{transcript}</Text>
+              </ScrollView>
+              
+              <TouchableOpacity 
+                style={styles.startOverButton}
+                onPress={handleStartOver}
+              >
+                <LinearGradient
+                  colors={['#106B7C', '#0E5A68']}
+                  style={styles.buttonGradient}
                 >
-                  <MaterialIcons name="auto-awesome" size={20} color="white" />
-                  <Text style={styles.buttonText}>Analyze Speech</Text>
-                </TouchableOpacity>
-              </>
-            )}
-          </View>
-        )}
+                  <Ionicons name="refresh" size={20} color="white" />
+                  <Text style={styles.buttonText}>Start Over</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.actionContainer}>
+              {analyzing ? (
+                <View style={styles.loadingContainer}>
+                  <View style={styles.loadingIndicator}>
+                    <ActivityIndicator size="large" color="#00CED1" />
+                  </View>
+                  <Text style={styles.loadingText}>Analyzing your recording...</Text>
+                  <Text style={styles.loadingSubtext}>This may take a moment</Text>
+                </View>
+              ) : (
+                <>
+                  {error && (
+                    <View style={styles.errorContainer}>
+                      <Ionicons name="alert-circle" size={22} color="#FF6B6B" />
+                      <Text style={styles.errorText}>{error}</Text>
+                    </View>
+                  )}
+                  
+                  <TouchableOpacity 
+                    style={styles.analyzeButton}
+                    onPress={handleAnalyzeVideo}
+                    activeOpacity={0.8}
+                  >
+                    <LinearGradient
+                      colors={['#1E90FF', '#1A7AE0']}
+                      style={styles.buttonGradient}
+                    >
+                      <Ionicons name="mic" size={20} color="white" />
+                      <Text style={styles.buttonText}>Analyze Speech</Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+          )}
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#0A1A2E',
+    paddingTop: RNStatusBar.currentHeight,
+  },
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    paddingHorizontal: 16, // Added padding for space at the edge of the screen
+  },
+  background: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
+  videoWrapper: {
+    height: '60%', // Increased from 45% to show more of the recording vertically
+    width: '100%',
+    backgroundColor: '#000',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 8,
+    borderRadius: 12, // Added border radius for better aesthetics
+    overflow: 'hidden',
+    marginTop: 10, // Added margin at the top
   },
   videoContainer: {
-    height: '50%',
-    backgroundColor: 'black',
+    flex: 1
   },
   content: {
     flex: 1,
-    padding: 20,
+    paddingVertical: 20,
+    position: 'relative',
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 20,
+    textAlign: 'center',
+    marginTop: 75, // Increased to make room for the info card above
   },
   backButton: {
+    position: 'absolute',
+    top: 10,
+    left: 0,
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#eee',
+    backgroundColor: 'rgba(255,255,255,0.1)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    zIndex: 10,
+  },
+  infoCardContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 5,
+    alignItems: 'center',
+    paddingTop: 10
+  },
+  infoCard: {
+    backgroundColor: 'rgba(16, 107, 124, 0.15)',
+    borderRadius: 12,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderLeftWidth: 3,
+    borderLeftColor: '#00CED1',
+    maxWidth: "70%",
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 6,
+  },
+  infoIcon: {
+    marginRight: 12,
+  },
+  infoText: {
+    color: '#E0E0E0',
+    fontSize: 15,
+    lineHeight: 22,
+    flex: 1
   },
   actionContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 10,
   },
-  button: {
+  buttonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
+    paddingVertical: 14,
     paddingHorizontal: 24,
-    borderRadius: 10,
-    marginVertical: 10,
+    borderRadius: 12,
+    width: '100%',
   },
-  primaryButton: {
-    backgroundColor: '#4285F4',
+  analyzeButton: {
+    width: width * 0.8,
+    maxWidth: 300,
+    borderRadius: 12,
+    marginTop: 10,
+    shadowColor: '#1E90FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
   },
-  secondaryButton: {
-    backgroundColor: '#34A853',
+  startOverButton: {
+    width: width * 0.8,
+    maxWidth: 300,
+    borderRadius: 12,
+    alignSelf: 'center',
+    shadowColor: '#106B7C',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
   },
   buttonText: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
-    marginLeft: 8,
+    marginLeft: 10,
   },
   loadingContainer: {
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingIndicator: {
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 30,
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
   },
   loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-    color: '#666',
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 8,
+  },
+  loadingSubtext: {
+    fontSize: 14,
+    color: '#B0B0B0',
+  },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 107, 107, 0.1)',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 20,
+    width: '100%',
   },
   errorText: {
-    color: 'red',
-    marginBottom: 16,
-    textAlign: 'center',
+    color: '#FF6B6B',
+    marginLeft: 8,
+    fontSize: 14,
   },
   resultContainer: {
     flex: 1,
+    marginTop: 10,
+    height: "auto",
+    maxHeight: 75
+  },
+  transcriptHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
   },
   resultTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 16,
-    color: '#333',
+    color: '#fff',
+  },
+  transcriptBadge: {
+    backgroundColor: 'rgba(0, 206, 209, 0.2)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  transcriptBadgeText: {
+    color: '#00CED1',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   transcriptContainer: {
     flex: 1,
-    backgroundColor: 'white',
-    borderRadius: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 12,
     padding: 16,
-    marginBottom: 16,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   transcript: {
-    fontSize: 18,
-    lineHeight: 26,
-    color: '#333',
+    fontSize: 16,
+    lineHeight: 24,
+    color: '#E0E0E0',
   },
 });
 

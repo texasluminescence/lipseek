@@ -12,14 +12,14 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@expo/webpack-config": "19.0.1",
     "@react-navigation/native": "^7.0.17",
     "@react-navigation/native-stack": "^7.3.1",
     "axios": "^1.8.4",
-    "expo": "~52.0.40",
+    "expo": "^52.0.46",
     "expo-av": "^15.0.2",
     "expo-camera": "^16.0.18",
     "expo-document-picker": "^13.0.3",
+    "expo-linear-gradient": "^14.0.2",
     "expo-media-library": "^17.0.6",
     "expo-status-bar": "~2.0.1",
     "expo-video-thumbnails": "^9.0.3",
