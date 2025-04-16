@@ -96,11 +96,11 @@ const PreviewScreen: React.FC = () => {
                   <Text style={styles.transcriptBadgeText}>Completed</Text>
                 </View>
               </View>
-              
-              <ScrollView style={styles.transcriptContainer}>
-                <Text style={styles.transcript}>{transcript}</Text>
-              </ScrollView>
-              
+              <View >
+                <ScrollView style={styles.transcriptContainer}>
+                  <Text style={styles.transcript}>{transcript}</Text>
+                </ScrollView>
+              </View>
               <TouchableOpacity 
                 style={styles.startOverButton}
                 onPress={handleStartOver}
@@ -161,6 +161,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0A1A2E',
     paddingTop: RNStatusBar.currentHeight,
+    overflow: "scroll"
   },
   container: {
     flex: 1,
@@ -329,9 +330,7 @@ const styles = StyleSheet.create({
   },
   resultContainer: {
     flex: 1,
-    marginTop: 10,
-    height: "auto",
-    maxHeight: 75
+    marginTop: 10
   },
   transcriptHeader: {
     flexDirection: 'row',
@@ -363,6 +362,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  transcriptContainerContainer: {
+    height: "auto"
   },
   transcript: {
     fontSize: 16,
